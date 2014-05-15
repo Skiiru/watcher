@@ -184,13 +184,6 @@ namespace History
             return DT;
         }
     }
-
-    public class HistoryItem
-    {
-        public string URL { get; set; }
-        public string Title { get; set; }
-        public DateTime VisitedTime { get; set; }
-    }
     public class GoogleChrome
     {
         static void Main()
@@ -206,21 +199,18 @@ namespace History
 			if (dataset != null && dataset.Tables.Count > 0 & dataset.Tables[0] != null)
 			{
 				DataTable dt = dataset.Tables[0];
-                List<HistoryItem> allHistoryItems = new List<HistoryItem>();
+                List<URL> allHistoryItems = new List<URL>();
 				foreach (DataRow historyRow in dt.Rows)
 				{
-					HistoryItem historyItem = new HistoryItem();
-					{
-						string url = Convert.ToString(historyRow["url"]);
-                        string Title = Convert.ToString(historyRow["title"]);
-					};
+                     string url = Convert.ToString(historyRow["url"]);
+                     string Title = Convert.ToString(historyRow["title"]);
 					// Chrome stores time elapsed since Jan 1, 1601 (UTC format) in microseconds
 					long utcMicroSeconds = Convert.ToInt64(historyRow["last_visit_time"]);
 					// Windows file time UTC is in nanoseconds, so multiplying by 10
 					DateTime gmtTime = DateTime.FromFileTimeUtc(10 * utcMicroSeconds);
 					// Converting to local time
 					DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(gmtTime, TimeZoneInfo.Local);
-					historyItem.VisitedTime = localTime;
+                    URL historyItem = new URL(url,Title,localTime,"Google Chrome");
 					allHistoryItems.Add(historyItem);
 				}
 			}
