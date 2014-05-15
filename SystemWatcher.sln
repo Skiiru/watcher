@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "History", "History\History.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GKH", "GKH\GKH.csproj", "{ABB80096-51F8-44A1-B354-6D4645F86343}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlHistoryLibrary", "UrlHistoryLibrary\UrlHistoryLibrary.csproj", "{0CCA76D3-8423-4099-AE2B-82CDD2C0BFEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{ABB80096-51F8-44A1-B354-6D4645F86343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB80096-51F8-44A1-B354-6D4645F86343}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB80096-51F8-44A1-B354-6D4645F86343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CCA76D3-8423-4099-AE2B-82CDD2C0BFEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CCA76D3-8423-4099-AE2B-82CDD2C0BFEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CCA76D3-8423-4099-AE2B-82CDD2C0BFEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CCA76D3-8423-4099-AE2B-82CDD2C0BFEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
