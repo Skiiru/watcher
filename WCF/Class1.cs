@@ -13,6 +13,8 @@ namespace WCF
         [OperationContract] // Делегируемый метод.
         string LoadData(string data, DateTime date,string type, int UserID);
         [OperationContract]
-        int GetUserID(string name);
+        int GetUserID(string UserName,string ComputerName);
+        [OperationContract]
+        bool check();
     }
 }
