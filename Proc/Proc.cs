@@ -4,32 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using System.Security.Permissions;
+
 
 namespace Proc
 {
     public class Proc
     {
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        /// <summary>
+        /// Функция на тик таймера. Добавляет нужную функцию в событие Exited
+        /// </summary>
         public void timer_tik()
         {
             foreach (Process x in System.Diagnostics.Process.GetProcesses())
-            {
-                if (x.ProcessName != "SearchFilterHost")
-                {
-                    try
+            {                   
+                try
                     {
                         x.EnableRaisingEvents = true;
                         x.Exited += new EventHandler(x_Exited);
                     }
-                    catch { };
-                }
+                catch { };
             }
         }
 
-        void x_Exited(object sender, EventArgs e)
+        private void x_Exited(object sender, EventArgs e)
         {
-
+            
         }
     }
 }

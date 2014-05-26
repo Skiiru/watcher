@@ -5,7 +5,7 @@ using System.Text;
 
 namespace History
 {
-    class URL
+    public class URL
     {
         public string title;
         public string url;

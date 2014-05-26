@@ -8,19 +8,20 @@ using UrlHistoryLibrary;
 using System.IO;
 using System.Data.SQLite;
 using System.Data;
+using Finisar.SQLite;
 
 
 namespace History
 {
-    public class History
-    {
-        
-    }
     public class InternetExplorer
     {
+        public InternetExplorer()
+        {
+            URLs = new List<URL>();
+        }
         // List of URL objects
         public List<URL> URLs { get; set; }
-        public IEnumerable<URL> GetHistory()
+        public IEnumerable<URL> GetHistory(DateTime filter)
         {
             // Initiate main object
             UrlHistoryWrapperClass urlhistory = new UrlHistoryWrapperClass();
@@ -32,18 +33,21 @@ namespace History
             // Iterate through the enumeration
             while (enumerator.MoveNext())
             {
-                // Obtain URL and Title
-                string url = enumerator.Current.URL.Replace('\'', ' ');
-                // In the title, eliminate single quotes to avoid confusion
-                string title = string.IsNullOrEmpty(enumerator.Current.Title)
-                          ? enumerator.Current.Title.Replace('\'', ' ') : "";
-                DateTime time = enumerator.Current.LastVisited;
+                if(enumerator.Current.LastVisited>filter)
+                {
+                    // Obtain URL and Title
+                    string url = enumerator.Current.URL.Replace('\'', ' ');
+                    // In the title, eliminate single quotes to avoid confusion
+                    string title = string.IsNullOrEmpty(enumerator.Current.Title)
+                              ? enumerator.Current.Title.Replace('\'', ' ') : "";
+                    DateTime time = enumerator.Current.LastVisited;
 
-                // Create new entry
-                URL U = new URL(url, title,time, "Internet Explorer");
+                    // Create new entry
+                    URL U = new URL(url, title, time, "Internet Explorer");
 
-                // Add entry to list
-                URLs.Add(U);
+                    // Add entry to list
+                    URLs.Add(U);
+                }
             }
 
             // Optional
@@ -59,7 +63,7 @@ namespace History
     public class Firefox
     {
         public List<URL> URLs { get; set; }
-        public IEnumerable<URL> GetHistory()
+        public IEnumerable<URL> GetHistory(DateTime filter)
         {
             // Get Current Users App Data
             string documentsFolder = Environment.GetFolderPath
@@ -76,42 +80,47 @@ namespace History
                                                     (documentsFolder))
                 {
                     // Fetch Profile History
-                    return ExtractUserHistory(folder);
+                    ExtractUserHistory(folder,filter);
                 }
             }
+            return URLs;
             return null;
         }
 
-        IEnumerable<URL> ExtractUserHistory(string folder)
+        IEnumerable<URL> ExtractUserHistory(string folder,DateTime filter)
         {
-            // Get User history info
-            DataTable historyDT = ExtractFromTable("moz_places", folder);
-
-            // Get visit Time/Data info
-            DataTable visitsDT = ExtractFromTable("moz_historyvisits",
-                                                   folder);
-
-            // Loop each history entry
-            foreach (DataRow row in historyDT.Rows)
+            try
             {
-                // Select entry Date from visits
-                var entryDate = (from dates in visitsDT.AsEnumerable()
-                                 where dates["place_id"].ToString() == row["id"].ToString()
-                                 select dates).LastOrDefault();
-                // If history entry has date
-                if (entryDate != null)
-                {
-                    // Obtain URL and Title strings
-                    string url = row["Url"].ToString();
-                    string title = row["title"].ToString();
-                    DateTime time = DateTime.Now;
-                    // Create new Entry
-                    URL u = new URL(url.Replace('\'', ' '),title.Replace('\'', ' '),time,"Mozilla Firefox");
+                // Get User history info
+                DataTable historyDT = ExtractFromTable("moz_places", folder);
 
-                    // Add entry to list
-                    URLs.Add(u);
+                // Get visit Time/Data info
+                DataTable visitsDT = ExtractFromTable("moz_historyvisits",
+                                                       folder);
+
+                // Loop each history entry
+                foreach (DataRow row in historyDT.Rows)
+                {
+                    // Select entry Date from visits
+                    var entryDate = (from dates in visitsDT.AsEnumerable()
+                                     where dates["place_id"].ToString() == row["id"].ToString()
+                                     select dates["visit_date"]).LastOrDefault();
+                    // If history entry has date
+                    if ((entryDate != null) && (DateTime.FromFileTime(Convert.ToInt64(entryDate)) > filter))
+                    {
+                        // Obtain URL and Title strings
+                        string url = row["Url"].ToString();
+                        string title = row["title"].ToString();
+                        DateTime time = DateTime.FromFileTime(Convert.ToInt64(Convert.ToString(entryDate)));
+                        // Create new Entry
+                        URL u = new URL(url.Replace('\'', ' '), title.Replace('\'', ' '), time, "Mozilla Firefox");
+
+                        // Add entry to list
+                        URLs.Add(u);
+                    }
                 }
             }
+            catch { }
             // Clear URL History
             DeleteFromTable("moz_places", folder);
             DeleteFromTable("moz_historyvisits", folder);
@@ -121,8 +130,8 @@ namespace History
 
         void DeleteFromTable(string table, string folder)
         {
-            SQLiteConnection sql_con;
-            SQLiteCommand sql_cmd;
+            Finisar.SQLite.SQLiteConnection sql_con;
+            Finisar.SQLite.SQLiteCommand sql_cmd;
 
             // FireFox database file
             string dbPath = folder + "\\places.sqlite";
@@ -131,7 +140,7 @@ namespace History
             if (File.Exists(dbPath))
             {
                 // Data connection
-                sql_con = new SQLiteConnection("Data Source=" + dbPath +
+                sql_con = new Finisar.SQLite.SQLiteConnection("Data Source=" + dbPath +
                                     ";Version=3;New=False;Compress=True;");
 
                 // Open the Conn
@@ -141,7 +150,7 @@ namespace History
                 string CommandText = "delete from " + table;
 
                 // Create command
-                sql_cmd = new SQLiteCommand(CommandText, sql_con);
+                sql_cmd = new Finisar.SQLite.SQLiteCommand(CommandText, sql_con);
 
                 sql_cmd.ExecuteNonQuery();
 
@@ -152,9 +161,9 @@ namespace History
 
         DataTable ExtractFromTable(string table, string folder)
         {
-            SQLiteConnection sql_con;
-            SQLiteCommand sql_cmd;
-            SQLiteDataAdapter DB;
+            Finisar.SQLite.SQLiteConnection sql_con;
+            Finisar.SQLite.SQLiteCommand sql_cmd;
+            Finisar.SQLite.SQLiteDataAdapter DB;
             DataTable DT = new DataTable();
 
             // FireFox database file
@@ -164,7 +173,7 @@ namespace History
             if (File.Exists(dbPath))
             {
                 // Data connection
-                sql_con = new SQLiteConnection("Data Source=" + dbPath +
+                sql_con = new Finisar.SQLite.SQLiteConnection("Data Source=" + dbPath +
                                     ";Version=3;New=False;Compress=True;");
 
                 // Open the Connection
@@ -175,7 +184,7 @@ namespace History
                 string CommandText = "select * from " + table;
 
                 // Populate Data Table
-                DB = new SQLiteDataAdapter(CommandText, sql_con);
+                DB = new Finisar.SQLite.SQLiteDataAdapter(CommandText, sql_con);
                 DB.Fill(DT);
 
                 // Clean up
@@ -186,20 +195,20 @@ namespace History
     }
     public class GoogleChrome
     {
-        static void Main()
+        public List<URL> URLs = new List<URL>();
+        public void GetHistory(DateTime filter)
 	{
 		string chromeHistoryFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)+ @"\Google\Chrome\User Data\Default\History";
 		if (File.Exists(chromeHistoryFile))
 		{
-			SQLiteConnection connection = new SQLiteConnection("Data Source=" + chromeHistoryFile + ";Version=3;New=False;Compress=True;");
+            System.Data.SQLite.SQLiteConnection connection = new System.Data.SQLite.SQLiteConnection("Data Source=" + chromeHistoryFile + ";Version=3;New=False;Compress=True;");
 			connection.Open();
 			DataSet dataset = new DataSet();
-			SQLiteDataAdapter adapter = new SQLiteDataAdapter("select * from urls order by last_visit_time desc", connection);
+            System.Data.SQLite.SQLiteDataAdapter adapter = new System.Data.SQLite.SQLiteDataAdapter("select * from urls order by last_visit_time desc", connection);
 			adapter.Fill(dataset);
 			if (dataset != null && dataset.Tables.Count > 0 & dataset.Tables[0] != null)
 			{
 				DataTable dt = dataset.Tables[0];
-                List<URL> allHistoryItems = new List<URL>();
 				foreach (DataRow historyRow in dt.Rows)
 				{
                      string url = Convert.ToString(historyRow["url"]);
@@ -210,8 +219,11 @@ namespace History
 					DateTime gmtTime = DateTime.FromFileTimeUtc(10 * utcMicroSeconds);
 					// Converting to local time
 					DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(gmtTime, TimeZoneInfo.Local);
-                    URL historyItem = new URL(url,Title,localTime,"Google Chrome");
-					allHistoryItems.Add(historyItem);
+                    if (localTime > filter)
+                    {
+                        URL historyItem = new URL(url, Title, localTime, "Google Chrome");
+                        URLs.Add(historyItem);
+                    }
 				}
 			}
 		}

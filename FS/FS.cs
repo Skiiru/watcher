@@ -2,16 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FS
 {
+    /// <summary>
+    /// Создает FileSystemWatcher для каждого логического диска и помещает в список
+    /// </summary>
     public class FS
     {
-        List<FileSystemWatcher> fs_lst;
+        public List<FileSystemWatcher> fs_lst;
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        /// <summary>
+        /// Cоздает FileSystemWatcher для каждого логического диска и помещает в список
+        /// </summary>
         public FS()
         {
+            fs_lst = new List<FileSystemWatcher>();
             try
             {
                 foreach (string x in Environment.GetLogicalDrives())
@@ -27,25 +36,6 @@ namespace FS
                 }
             }
             catch { };
-            foreach (FileSystemWatcher x in fs_lst)
-            {
-                x.IncludeSubdirectories = true;
-                x.EnableRaisingEvents = true;
-                x.Changed += new FileSystemEventHandler(x_Changed);
-                x.Created += new FileSystemEventHandler(x_Changed);
-                x.Deleted += new FileSystemEventHandler(x_Changed);
-                x.Renamed += new RenamedEventHandler(x_Renamed);
-
-            }
-        }
-        
-        void x_Renamed(object sender, RenamedEventArgs e)
-        {
-            
-        }
-        void x_Changed(object sender, FileSystemEventArgs e)
-        {
-
         }
     }
 }
