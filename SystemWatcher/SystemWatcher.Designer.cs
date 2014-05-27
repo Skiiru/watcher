@@ -28,8 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.eventLog = new System.Diagnostics.EventLog();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.eventLog)).BeginInit();
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // SystemWatcher
             // 
@@ -41,6 +48,7 @@
         #endregion
 
         private System.Diagnostics.EventLog eventLog;
+        private System.Windows.Forms.Timer timer1;
 
     }
 }

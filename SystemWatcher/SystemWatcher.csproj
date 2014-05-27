@@ -32,13 +32,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Data">
+      <HintPath>..\Data\bin\Debug\Data.dll</HintPath>
+    </Reference>
+    <Reference Include="FS">
+      <HintPath>..\FS\bin\Debug\FS.dll</HintPath>
+    </Reference>
     <Reference Include="Gma.UserActivityMonitor">
-      <HintPath>.\Gma.UserActivityMonitor.dll</HintPath>
+      <HintPath>..\..\GlobalHook\Gma.UserActivityMonitor\bin\Debug\Gma.UserActivityMonitor.dll</HintPath>
+    </Reference>
+    <Reference Include="History">
+      <HintPath>..\History\bin\Debug\History.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.NET">
+      <HintPath>..\History\SQLite.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,6 +59,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
+    <Reference Include="UrlHistoryLibrary">
+      <HintPath>..\UrlHistoryLibrary\bin\Release\UrlHistoryLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProjectInstaller.cs">

@@ -84,7 +84,7 @@ namespace History
                 }
             }
             return URLs;
-            return null;
+          
         }
 
         IEnumerable<URL> ExtractUserHistory(string folder,DateTime filter)
