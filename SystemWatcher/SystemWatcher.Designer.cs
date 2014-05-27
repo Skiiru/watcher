@@ -1,6 +1,6 @@
 ﻿namespace SystemWatcher
 {
-    partial class Service1
+    partial class SystemWatcher
     {
         /// <summary> 
         /// Требуется переменная конструктора.
@@ -28,14 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.eventLog = new System.Diagnostics.EventLog();
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog)).BeginInit();
             // 
-            // Service1
+            // SystemWatcher
             // 
             this.ServiceName = "Service1";
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog)).EndInit();
 
         }
 
         #endregion
+
+        private System.Diagnostics.EventLog eventLog;
 
     }
 }

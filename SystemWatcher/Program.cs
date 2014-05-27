@@ -17,7 +17,7 @@ namespace SystemWatcher
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 
             { 
-                new Service1() 
+                new SystemWatcher() 
             };
             ServiceBase.Run(ServicesToRun);
         }

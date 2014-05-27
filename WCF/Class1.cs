@@ -15,6 +15,12 @@ namespace WCF
         [OperationContract]
         int GetUserID(string UserName,string ComputerName);
         [OperationContract]
+        int GetComputerID(string ComputerName);
+        [OperationContract]
         bool check();
+        [OperationContract]
+        string LoadComputer(string name);
+        [OperationContract]
+        string LoadUser(string name);
     }
 }
