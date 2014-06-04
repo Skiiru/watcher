@@ -39,6 +39,8 @@
             // 
             // SystemWatcherInstaller
             // 
+            this.SystemWatcherInstaller.Description = "Service for monitoring user activity";
+            this.SystemWatcherInstaller.DisplayName = "SystemWatcher";
             this.SystemWatcherInstaller.ServiceName = "SystemWatcher";
             this.SystemWatcherInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
